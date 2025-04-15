@@ -4,6 +4,7 @@ from fastapi.responses import PlainTextResponse, FileResponse, JSONResponse
 import shutil
 import os
 from methods.data_processing import empty_folder, empty_subfolders
+from methods.log_store import log_stream
 from methods.pdf_to_img import convert_pdf_to_images
 from methods.unmarked import unmarked
 from methods.marked import marked
@@ -48,6 +49,8 @@ async def root():
 
 @app.post("/unmarked")
 async def upload_pdf(file: UploadFile = File(...)):
+    log_stream.clear()  # ✅ clear old logs
+
     temp_pdf_path = "temp_uploaded.pdf"
     
     #Clear and recreate data folder
@@ -66,7 +69,7 @@ async def upload_pdf(file: UploadFile = File(...)):
     # Step 2: Classify images and extract Q/A
     unmarked(log_file_path, image_folder, aiken_output_file, answers_output_file, data_questions_folder, data_answers_folder, combined_folder)
 
-    return {"response": 4, "pages": num_pages}
+    return {"No. of files retured": num_pages}
 
 
 @app.post("/marked")
@@ -88,7 +91,7 @@ async def upload_pdf(file: UploadFile = File(...)):
     # Step 2: Classify images and extract Q/A
     marked(log_file_path, image_folder, combined_folder)
     
-    return {"response": 4, "pages": num_pages}
+    return {"No. of files retured": num_pages}
 
 
 combined_folder = os.path.join("data_folder", "combined_folder")
@@ -108,3 +111,22 @@ async def download_file(filename: str):
     if not os.path.exists(file_path):
         return PlainTextResponse("File not found", status_code=404)
     return FileResponse(file_path, media_type="text/plain", filename=filename)
+
+from fastapi.responses import StreamingResponse
+import asyncio
+
+
+@app.get("/logs")
+async def stream_logs():
+    async def event_generator():
+        print(f"🌐 [SSE] log_stream length: {len(log_stream)}")
+
+        previous_len = 0
+        while True:
+            await asyncio.sleep(0.5)
+            if len(log_stream) > previous_len:
+                for line in log_stream[previous_len:]:
+                    yield f"data: {line}\n\n"
+                previous_len = len(log_stream)
+                
+    return StreamingResponse(event_generator(), media_type="text/event-stream")

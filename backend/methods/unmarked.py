@@ -2,6 +2,7 @@ import os
 from methods.data_processing import sort_numerically, encode_image
 from methods.text_converters import img2questions, img2answers, img2qna, combine_qna_files
 from config.openai_client import client
+from methods.log_store import log_message  # shared logger
 
 # Main classification and routing loop
 def unmarked(log_file_path, image_folder, aiken_output_file, answers_output_file, data_questions_folder, data_answers_folder, combined_folder):
@@ -13,6 +14,8 @@ def unmarked(log_file_path, image_folder, aiken_output_file, answers_output_file
                 encoded_image = encode_image(image_path)
 
                 print(f"🔍 Processing: {image_name}")
+                log_message(f"🔍 Processing: {image_name}")
+
 
                 response = client.chat.completions.create(
                     model="gpt-4o",
@@ -46,6 +49,7 @@ Do not include anything else in the response."""
                 classification = response.choices[0].message.content.strip()
                 print(f"📝 {image_name}: {classification}")
                 log_file.write(f"{image_name}: {classification}\n")
+                log_file.flush()
 
                 if classification == "Only Questions":
                     # img2questions(image_path)

@@ -58,3 +58,5 @@ def empty_folder(folder_path: str):
                 print(f"🧹 Deleted folder: {item_path}")
         except Exception as e:
             print(f"⚠️ Could not delete {item_path}: {e}")
+
+
