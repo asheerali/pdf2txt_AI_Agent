@@ -25,7 +25,7 @@ B. Option B
 C. Option C
 D. Option D
 
-***note: Do NOT include anything else in the output. Just the questions and answers in Aiken format.***"""
+***note: Do NOT include anything else in the output not even the question number. Just the questions and answers in Aiken format.***"""
                     },
                     {
                         "type": "image_url",

@@ -265,7 +265,7 @@ export default function UnmarkedUpload({ goBack }) {
                     strokeLinejoin="round"
                   />
                 </svg>
-                Process PDF
+                Process PDF.
               </>
             )}
           </button>

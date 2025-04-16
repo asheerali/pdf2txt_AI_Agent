@@ -45,7 +45,7 @@ app.add_middleware(
 
 @app.get("/", response_class=PlainTextResponse)
 async def root():
-    return "response ok"
+    return "response not ok"
 
 @app.post("/unmarked")
 async def upload_pdf(file: UploadFile = File(...)):
@@ -130,3 +130,4 @@ async def stream_logs():
                 previous_len = len(log_stream)
                 
     return StreamingResponse(event_generator(), media_type="text/event-stream")
+
