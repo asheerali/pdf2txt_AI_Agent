@@ -33,6 +33,6 @@ VOLUME /app
 EXPOSE 8000
 
 # Run FastAPI app using uvicorn
-# CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
 # CMD ["uvicorn", "main:app", "--reload", "--host", "0.0.0.0", "--port", "8000" ]
-CMD [ "uvicorn",  "main:app",  "--reload", "--host", "0.0.0.0", "--port", "8000", "--reload-dir", "/app", "--reload-exclude", "logs", "--reload-exclude", "images", "--reload-exclude", "data_folder"]
+# CMD [ "uvicorn",  "main:app",  "--reload", "--host", "0.0.0.0", "--port", "8000", "--reload-dir", "/app", "--reload-exclude", "logs", "--reload-exclude", "images", "--reload-exclude", "data_folder"]

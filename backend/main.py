@@ -45,7 +45,7 @@ app.add_middleware(
 
 @app.get("/", response_class=PlainTextResponse)
 async def root():
-    return "response not ok"
+    return "response ok"
 
 @app.post("/unmarked")
 async def upload_pdf(file: UploadFile = File(...)):
