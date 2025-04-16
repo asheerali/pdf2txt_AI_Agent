@@ -3,6 +3,8 @@ import React, { useRef, useState } from "react";
 // import UploadPDFButton from "./UploadPDFButton";
 
 export default function MarkedUpload({ goBack }) {
+  const apiUrl = process.env.REACT_APP_API_URL;
+
   const fileInputRef = useRef();
   const [selectedFile, setSelectedFile] = useState(null);
   const [status, setStatus] = useState("");
@@ -30,6 +32,9 @@ export default function MarkedUpload({ goBack }) {
   };
 
   const handleUpload = async () => {
+    // console.log("react api", `${apiUrl}/upload`)
+    console.log("API URL from .env:", apiUrl, `${apiUrl}/marked`);
+
     if (!selectedFile) {
       setStatus("no_file");
       return;
@@ -40,7 +45,7 @@ export default function MarkedUpload({ goBack }) {
 
     try {
       setStatus("loading");
-      const res = await fetch("http://localhost:8000/marked", {
+      const res = await fetch(`${apiUrl}/marked`, {
         method: "POST",
         body: formData,
       });
@@ -48,7 +53,7 @@ export default function MarkedUpload({ goBack }) {
       setResponseData(data);
       setStatus("success");
 
-      const fileRes = await fetch("http://localhost:8000/combined-files");
+      const fileRes = await fetch(`${apiUrl}/combined-files`);
       const fileData = await fileRes.json();
       setCombinedFiles(fileData.files);
     } catch (err) {
@@ -426,7 +431,7 @@ export default function MarkedUpload({ goBack }) {
                   </svg>
                   <span className="file-list-name">{fileName}</span>
                   <a
-                    href={`http://localhost:8000/download/${fileName}`}
+                    href={`${apiUrl}/download/${fileName}`}
                     download
                     target="_blank"
                     rel="noopener noreferrer"

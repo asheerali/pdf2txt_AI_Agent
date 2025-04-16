@@ -3,6 +3,8 @@ import React, { useEffect, useRef, useState } from "react";
 // import UploadPDFButton from "./UploadPDFButton";
 
 export default function UnmarkedUpload({ goBack }) {
+  const apiUrl = process.env.REACT_APP_API_URL;
+
   const fileInputRef = useRef();
   const [selectedFile, setSelectedFile] = useState(null);
   const [status, setStatus] = useState("");
@@ -11,7 +13,7 @@ export default function UnmarkedUpload({ goBack }) {
   const [logs, setLogs] = useState([]);
 
   useEffect(() => {
-    const eventSource = new EventSource("http://localhost:8000/logs");
+    const eventSource = new EventSource(`${apiUrl}/logs`);
 
     eventSource.onmessage = (e) => {
       setLogs((prev) => [...prev, e.data]);
@@ -41,6 +43,8 @@ export default function UnmarkedUpload({ goBack }) {
   };
 
   const handleUpload = async () => {
+    console.log("API URL from .env:", apiUrl, `${apiUrl}/unmarked`);
+
     if (!selectedFile) {
       setStatus("no_file");
       return;
@@ -50,7 +54,7 @@ export default function UnmarkedUpload({ goBack }) {
     formData.append("file", selectedFile);
 
     // ✅ Connect to SSE just before fetch
-    const eventSource = new EventSource("http://localhost:8000/logs");
+    const eventSource = new EventSource(`${apiUrl}/logs`);
     eventSource.onmessage = (e) => {
       setLogs((prev) => [...prev, e.data]);
     };
@@ -58,7 +62,7 @@ export default function UnmarkedUpload({ goBack }) {
     setStatus("loading");
 
     try {
-      const res = await fetch("http://localhost:8000/unmarked", {
+      const res = await fetch( `${apiUrl}/unmarked`, {
         method: "POST",
         body: formData,
       });
@@ -67,7 +71,7 @@ export default function UnmarkedUpload({ goBack }) {
       setResponseData(data);
       setStatus("success");
 
-      const fileRes = await fetch("http://localhost:8000/combined-files");
+      const fileRes = await fetch(`${apiUrl}/combined-files`);
       const fileData = await fileRes.json();
       setCombinedFiles(fileData.files);
     } catch (err) {
@@ -454,7 +458,7 @@ export default function UnmarkedUpload({ goBack }) {
                   </svg>
                   <span className="file-list-name">{fileName}</span>
                   <a
-                    href={`http://localhost:8000/download/${fileName}`}
+                    href={`${apiUrl}/download/${fileName}`}
                     download
                     target="_blank"
                     rel="noopener noreferrer"
